@@ -275,3 +275,49 @@ std::string Student::FormatTime(const tm* time_info, const std::int8_t ops) cons
 
 	return buffer;																// 返回日期字符串
 }
+
+// 支持默认打印信息
+std::ostream& operator<<(std::ostream& os, const Student& stu)
+{
+	os << "姓名\t" << stu.name() << "\n"
+		<< "性别\t" << stu.sex() << "\n"
+		<< "生日\t" << stu.birthday(TimeOutputModel::Date) << "\n"
+		<< "入学\t" << stu.admission_date(TimeOutputModel::Date) << "\n"
+		<< "毕业\t" << stu.expected_graduation_date(TimeOutputModel::Date) << "\n"
+		<< "学号\t" << stu.student_id() << "\n"
+		<< "学院\t" << stu.college() << "\n"
+		<< "班级\t" << stu.classroom();
+	return os;
+}
+
+// 只支持修改“学院”、“班级”的信息
+std::istream& operator>>(std::istream& is, Student& stu)
+{
+	// 定义对应的缓冲区
+	std::string college_buffer;
+	std::string classroom_buffer;
+
+	std::cout << "学院: ";
+	is >> college_buffer;
+	if (college_buffer.length() > stu.COLLEGE_NAME_MAX_LENGTH)
+	{
+		throw std::invalid_argument("College name is too long.");
+	} 
+	else
+	{
+		stu._college = college_buffer;
+	}
+
+	std::cout << "班级: ";
+	is >> classroom_buffer;
+	if (classroom_buffer.length() > stu.CLASSROOM_NAME_MAX_LENGTH)
+	{
+		throw std::invalid_argument("College name is too long.");
+	}
+	else
+	{
+		stu._classroom = classroom_buffer;
+	}
+
+	return is;
+}
