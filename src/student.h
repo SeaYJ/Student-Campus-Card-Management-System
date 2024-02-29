@@ -3,9 +3,11 @@
 
 #include <iostream>
 #include <string>
+#include <stdexcept>
 #include <ctime>
 #include "SPECIAL_DEFINITION_MACRO.h"
 #include "time_output_model.h"
+#include "student_card.h"
 
 class Student
 {
@@ -27,14 +29,14 @@ public:
 		std::string college = "未分配",
 		std::string classroom = "未分配"
 	)
-		: kName(name.substr(0, NAME_MAX_LENGTH)),
-		kSex(sex.substr(0, SEX_MAX_LENGTH)),
+		: kName(correctName(name)),
+		kSex(correctSex(sex)),
 		kBirthday(birthday),
 		kAdmissionDate(admission_date),
 		kExpectedGraduationDate(egdate),
-		kStudentID((std::log10(student_id) + 1 > STUDENT_ID_MAX_LENGTH ? -1 : student_id)),
-		_college(college.substr(0, COLLEGE_NAME_MAX_LENGTH)),
-		_classroom(classroom.substr(0, CLASSROOM_NAME_MAX_LENGTH))
+		kStudentID(correctStudentID(student_id)),
+		_college(correctCollegeName(college)),
+		_classroom(correctClassroomName(classroom))
 	{}
 
 	~Student();
@@ -56,6 +58,10 @@ public:
 	Student& set_college(const std::string college);
 	Student& set_classroom(const std::string classroom);
 
+	// 检查函数
+	bool checkCollegeName(const std::string college) const;
+	bool checkClassroomName(const std::string classroom) const;
+
 private:
 	DISALLOW_COPY_AND_ASSIGN(Student);
 
@@ -68,6 +74,7 @@ private:
 	const std::int8_t NAME_MAX_LENGTH = 15;				// kName 的最大长度
 	const std::int8_t SEX_MAX_LENGTH = 5;				// kSex 的最大长度
 	const std::int8_t STUDENT_ID_MAX_LENGTH = 15;		// kStudentID 的最大长度
+	const std::int8_t STUDENT_ID_MIN_LENGTH = 6;		// kStudentID 的最小长度
 	const std::int8_t COLLEGE_NAME_MAX_LENGTH = 50;		// _college 的最大长度
 	const std::int8_t CLASSROOM_NAME_MAX_LENGTH = 50;	// _classroom 的最大长度
 
@@ -80,9 +87,14 @@ private:
 	std::string _college;						// 所属学院
 	std::string _classroom;						// 所属班级
 
-	// 格式化日期字符串
-	// 就是按照 ops 的要求将需要的可选字段进行组合、拼接
-	std::string FormatTime(const struct tm* time_info, const std::int8_t ops) const;
+	StudentCard* _student_card;					// 校园卡
+
+	// 纠错函数
+	std::string correctName(const std::string name) const;
+	std::string correctSex(const std::string sex) const;
+	std::int64_t correctStudentID(const std::int64_t student_id) const;
+	std::string correctCollegeName(const std::string college) const;
+	std::string correctClassroomName(const std::string classroom) const;
 };
 
 #endif // !STUDENT_H_

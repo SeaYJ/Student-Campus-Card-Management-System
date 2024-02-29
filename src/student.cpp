@@ -2,6 +2,7 @@
 
 Student::~Student()
 {
+	delete _student_card;
 }
 
 std::string Student::name() const
@@ -16,14 +17,14 @@ std::string Student::sex() const
 
 std::string Student::birthday() const
 {
-	const struct tm *time_info = _localtime64(&(this->kBirthday));				// 解析得到 tm 结构体数据
+	const struct tm* time_info = _localtime64(&(this->kBirthday));				// 解析得到 tm 结构体数据
 
 	// 为了提高效率，这里直接采用最原始的方式进行格式化日期字符串
 	// 实际后面的所有代码等同于：
 	/* CPP 等效代码
-	* return FormatTime(time_info, TimeOutputModel::All);
+	* return TimeOutputModel::FormatTime(time_info, TimeOutputModel::All);
 	*/
-	// 在等效代码中因为经过 FormatTime 函数需要很多 if 判断，
+	// 在等效代码中因为经过 TimeOutputModel::FormatTime 函数需要很多 if 判断，
 	// 然后还要将每个字段进行组合（字符串拼接），
 	// 我认为会花费不必要的时间！！！
 	char buffer[128] = { 0 };													// 定义一个足够大的缓冲区
@@ -36,7 +37,7 @@ std::string Student::birthday(const std::int8_t ops) const
 {
 	const struct tm* time_info = _localtime64(&(this->kBirthday));				// 解析得到 tm 结构体数据
 
-	return FormatTime(time_info, ops);											// 返回由 ops 确定的时间字串组合
+	return TimeOutputModel::FormatTime(time_info, ops);							// 返回由 ops 确定的时间字串组合
 }
 
 std::string Student::admission_date() const
@@ -46,9 +47,9 @@ std::string Student::admission_date() const
 	// 为了提高效率，这里直接采用最原始的方式进行格式化日期字符串
 	// 实际后面的所有代码等同于：
 	/* CPP 等效代码
-	* return FormatTime(time_info, TimeOutputModel::All);
+	* return TimeOutputModel::FormatTime(time_info, TimeOutputModel::All);
 	*/
-	// 在等效代码中因为经过 FormatTime 函数需要很多 if 判断，
+	// 在等效代码中因为经过 TimeOutputModel::FormatTime 函数需要很多 if 判断，
 	// 然后还要将每个字段进行组合（字符串拼接），
 	// 我认为会花费不必要的时间！！！
 	char buffer[128] = { 0 };													// 定义一个足够大的缓冲区
@@ -62,7 +63,7 @@ std::string Student::admission_date(const std::int8_t ops) const
 {
 	const struct tm* time_info = _localtime64(&(this->kAdmissionDate));			// 解析得到 tm 结构体数据
 
-	return FormatTime(time_info, ops);											// 返回由 ops 确定的时间字串组合
+	return TimeOutputModel::FormatTime(time_info, ops);							// 返回由 ops 确定的时间字串组合
 }
 
 std::string Student::expected_graduation_date() const
@@ -72,9 +73,9 @@ std::string Student::expected_graduation_date() const
 	// 为了提高效率，这里直接采用最原始的方式进行格式化日期字符串
 	// 实际后面的所有代码等同于：
 	/* CPP 等效代码
-	* return FormatTime(time_info, TimeOutputModel::All);
+	* return TimeOutputModel::FormatTime(time_info, TimeOutputModel::All);
 	*/
-	// 在等效代码中因为经过 FormatTime 函数需要很多 if 判断，
+	// 在等效代码中因为经过 TimeOutputModel::FormatTime 函数需要很多 if 判断，
 	// 然后还要将每个字段进行组合（字符串拼接），
 	// 我认为会花费不必要的时间！！！
 	char buffer[128] = { 0 };													// 定义一个足够大的缓冲区
@@ -88,7 +89,7 @@ std::string Student::expected_graduation_date(const std::int8_t ops) const
 {
 	const struct tm* time_info = _localtime64(&(this->kExpectedGraduationDate));// 解析得到 tm 结构体数据
 
-	return FormatTime(time_info, ops);											// 返回由 ops 确定的时间字串组合
+	return TimeOutputModel::FormatTime(time_info, ops);							// 返回由 ops 确定的时间字串组合
 }
 
 std::int64_t Student::student_id() const
@@ -109,171 +110,120 @@ std::string Student::classroom() const
 Student& Student::set_college(const std::string college)
 {
 	// 长度检查
-	if (college.length() > Student::COLLEGE_NAME_MAX_LENGTH) {
-		throw std::invalid_argument("College name is too long.");
+	if (checkCollegeName(college)) {
+		this->_college = college;
+	}
+	else {
+		throw std::invalid_argument("College name is not valid.");
 	}
 
-	this->_college = college;
 	return *this;
 }
 
 Student& Student::set_classroom(const std::string classroom)
 {
 	// 长度检查
-	if (classroom.length() > Student::CLASSROOM_NAME_MAX_LENGTH) {
-		throw std::invalid_argument("Classroom name is too long.");
+	if (checkClassroomName(classroom)) {
+		this->_classroom = classroom;
+	}
+	else {
+		throw std::invalid_argument("Classroom name is not valid.");
 	}
 
-	this->_classroom = classroom;
 	return *this;
 }
 
-/// <summary>
-/// 格式化日期字符串
-/// </summary>
-/// <param name="time_info">包含日期信息的 tm 结构体</param>
-/// <param name="ops">可选字段的可选参数组合</param>
-/// <returns>包含特定可选字段的日期字符串</returns>
-std::string Student::FormatTime(const tm* time_info, const std::int8_t ops) const
+bool Student::checkCollegeName(const std::string college) const
 {
-	std::string buffer = "";													// 返回值缓冲区
-	char part_buffer[16];														// 可选时间字段缓冲区
-
-	bool include_year = false;													// 是否包含“年”的字段
-	bool include_month = false;													// 是否包含“月”的字段
-	bool include_day = false;													// 是否包含“日”的字段
-	bool include_hour = false;													// 是否包含“时”的字段
-	bool include_minute = false;												// 是否包含“分”的字段
-	bool include_second = false;												// 是否包含“秒”的字段
-	bool include_weekday = false;												// 是否包含“周”的字段
-
-	if (ops & TimeOutputModel::Year)											// 添加“年”字段
-	{
-		include_year = true;													// 修改标识符，表示该字段被包含在日期字串内
-
-		strftime(
-			part_buffer, 
-			sizeof(part_buffer), 
-			"%Y", 
-			time_info
-		);																		// 获取年
-		buffer.append(part_buffer);												// 添加年字段
+	if (college.length() > COLLEGE_NAME_MAX_LENGTH) {
+		return false;
 	}
 
-	if (ops & TimeOutputModel::Month)											// 添加“月”字段
-	{
-		include_month = true;													// 修改标识符，表示该字段被包含在日期字串内
+	return true;
+}
 
-		bool include_date_separator = include_year;								// 计算是否需要添加“日期内分隔符”
-
-		strftime(
-			part_buffer, 
-			sizeof(part_buffer), 
-			(include_date_separator ? "/%m" : "%m"), 
-			time_info
-		);																		// 获取月
-		buffer.append(part_buffer);												// 添加月字段
+bool Student::checkClassroomName(const std::string classroom) const
+{
+	if (classroom.length() > CLASSROOM_NAME_MAX_LENGTH) {
+		return false;
 	}
 
-	if (ops & TimeOutputModel::Day)												// 添加“日”字段
-	{
-		include_day = true;														// 修改标识符，表示该字段被包含在日期字串内
+	return true;
+}
 
-		bool include_date_separator =
-			include_year ||
-			include_month;														// 计算是否需要添加“日期内分隔符”
-
-		strftime(
-			part_buffer, 
-			sizeof(part_buffer), 
-			(include_date_separator ? "/%d" : "%d"), 
-			time_info
-		);																		// 获取日
-		buffer.append(part_buffer);												// 添加日字段
+std::string Student::correctName(const std::string name) const
+{
+	// 当名字超出最大长度，
+	// 仅显示部分内容，并用省略号显示
+	if (name.length() > NAME_MAX_LENGTH) {
+		std::string name_with_omitted_char = name.substr(0, (NAME_MAX_LENGTH - std::int8_t(3)));
+		name_with_omitted_char.append("...");
+		return name_with_omitted_char;
 	}
 
-	if (ops & TimeOutputModel::Hour)											// 添加“时”字段
-	{
-		include_hour = true;													// 修改标识符，表示该字段被包含在日期字串内
+	// 返回设置名字
+	return name;
+}
 
-		bool include_group_separator =
-			include_year ||
-			include_month ||
-			include_day;														// 计算是否需要添加“组间分隔符”
-																				// 所谓“组间分隔符”即为Date、Time、Weekday三者间的分隔符
-
-		strftime(
-			part_buffer, 
-			sizeof(part_buffer), 
-			(include_group_separator ? " %H" : "%H"), 
-			time_info
-		);																		// 获取时
-		buffer.append(part_buffer);												// 添加时字段
+std::string Student::correctSex(const std::string sex) const
+{
+	// 当性别超出最大长度，
+	// 仅显示部分内容，并用省略号显示
+	if (sex.length() > SEX_MAX_LENGTH) {
+		std::string sex_with_omitted_char = sex.substr(0, (SEX_MAX_LENGTH - std::int8_t(3)));
+		sex_with_omitted_char.append("...");
+		return sex_with_omitted_char;
 	}
 
-	if (ops & TimeOutputModel::Minute)											// 添加“分”字段
-	{
-		include_minute = true;													// 修改标识符，表示该字段被包含在日期字串内
+	// 返回设置性别
+	return sex;
+}
 
-		bool include_time_separator =
-			include_hour;														// 计算是否需要添加“时间内分隔符”
-		bool include_group_separator =
-			include_year ||
-			include_month ||
-			include_day;														// 计算是否需要添加“组间分隔符”
+std::int64_t Student::correctStudentID(const std::int64_t student_id) const
+{
+	std::int64_t student_id_length = std::int64_t(std::log10(student_id)) + std::int64_t(1);
 
-		strftime(
-			part_buffer, 
-			sizeof(part_buffer), 
-			(include_time_separator ? ":%M" : (include_group_separator ? " %M" : "%M")), 
-			time_info
-		);																		// 获取分
-		buffer.append(part_buffer);												// 添加分字段
+	// 设置学号位数过长
+	if (student_id_length > STUDENT_ID_MAX_LENGTH) {
+		// 因为学号是 Student 类的 const 常量，只能赋值一次。
+		// 所以，如果设置的值错误，就应该直接抛弃错误对象的创建，
+		// 否则，错误的 student id 将无法重新赋值
+		throw std::invalid_argument("The 'student_id' exceeds maximum length.");
+	}
+	else if (student_id_length < STUDENT_ID_MIN_LENGTH) {
+		throw std::invalid_argument("The 'student_id' exceeds minimum length.");
 	}
 
-	if (ops & TimeOutputModel::Second)											// 添加“秒”字段
-	{
-		include_second = true;													// 修改标识符，表示该字段被包含在日期字串内
+	// 返回设置的学号
+	return student_id;
+}
 
-		bool include_time_separator =
-			include_hour ||
-			include_minute;														// 计算是否需要添加“时间内分隔符”
-		bool include_group_separator =
-			include_year ||
-			include_month ||
-			include_day;														// 计算是否需要添加“组间分隔符”
-
-		strftime(
-			part_buffer, 
-			sizeof(part_buffer), 
-			(include_time_separator ? ":%S" : (include_group_separator ? " %S" : "%S")), 
-			time_info
-		);																		// 获取秒
-		buffer.append(part_buffer);												// 添加秒字段
+std::string Student::correctCollegeName(const std::string college) const
+{
+	// 当学院名超出最大长度，
+	// 仅显示部分内容，并用省略号显示
+	if (college.length() > COLLEGE_NAME_MAX_LENGTH) {
+		std::string college_with_omitted_char = college.substr(0, (COLLEGE_NAME_MAX_LENGTH - std::int8_t(3)));
+		college_with_omitted_char.append("...");
+		return college_with_omitted_char;
 	}
 
-	if (ops & TimeOutputModel::Weekday)											// 添加“周”字段
-	{
-		include_weekday = true;													// 修改标识符，表示该字段被包含在日期字串内
+	// 返回设置学院名
+	return college;
+}
 
-		bool include_group_separator =
-			include_year ||
-			include_month ||
-			include_day ||
-			include_hour ||
-			include_minute ||
-			include_second;														// 计算是否需要添加“组间分隔符”
-
-		strftime(
-			part_buffer, 
-			sizeof(part_buffer), 
-			(include_group_separator ? " %A" : "%A"), 
-			time_info
-		);																		// 获取周
-		buffer.append(part_buffer);												// 添加周字段
+std::string Student::correctClassroomName(const std::string classroom) const
+{
+	// 当班级名超出最大长度，
+	// 仅显示部分内容，并用省略号显示
+	if (classroom.length() > CLASSROOM_NAME_MAX_LENGTH) {
+		std::string classroom_with_omitted_char = classroom.substr(0, (CLASSROOM_NAME_MAX_LENGTH - std::int8_t(3)));
+		classroom_with_omitted_char.append("...");
+		return classroom_with_omitted_char;
 	}
 
-	return buffer;																// 返回日期字符串
+	// 返回设置班级名
+	return classroom;
 }
 
 // 支持默认打印信息
@@ -299,10 +249,10 @@ std::istream& operator>>(std::istream& is, Student& stu)
 
 	std::cout << "学院: ";
 	is >> college_buffer;
-	if (college_buffer.length() > stu.COLLEGE_NAME_MAX_LENGTH)
+	if (stu.checkCollegeName(college_buffer))
 	{
-		throw std::invalid_argument("College name is too long.");
-	} 
+		throw std::invalid_argument("College name is not valid.");
+	}
 	else
 	{
 		stu._college = college_buffer;
@@ -310,9 +260,9 @@ std::istream& operator>>(std::istream& is, Student& stu)
 
 	std::cout << "班级: ";
 	is >> classroom_buffer;
-	if (classroom_buffer.length() > stu.CLASSROOM_NAME_MAX_LENGTH)
+	if (stu.checkClassroomName(classroom_buffer))
 	{
-		throw std::invalid_argument("College name is too long.");
+		throw std::invalid_argument("Classroom name is not valid.");
 	}
 	else
 	{
