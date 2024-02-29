@@ -21,6 +21,9 @@
     <ClCompile Include="src\student.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\student_card.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\main.h">
