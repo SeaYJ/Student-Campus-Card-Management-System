@@ -41,5 +41,8 @@
     <ClInclude Include="src\time_output_model.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\bill_info.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
