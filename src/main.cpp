@@ -2,9 +2,9 @@
 #include "student.h"
 
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
-	std::string 
+	std::string
 		name = "—Ó“ª“ª≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘",
 		sex = "≈Æ≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘",
 		college = "º∆À„ª˙—ß‘∫≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘",
@@ -48,14 +48,44 @@ int main(int argc, char* argv[])
 	//	<< "—ß∫≈\t" << s.student_id() << "\n"
 	//	<< "—ß‘∫\t" << s.college() << "\n"
 	//	<< "∞‡º∂\t" << s.classroom() << std::endl;
-	
-	std::cout << s << "\n";
+
+	//std::cout << s << "\n";
 	//std::cin >> s;
 	//std::cout << s << "\n";
 
 	StudentCard sd(student_id, admission_date, egdate);
 
+	//boost::multiprecision::cpp_dec_float_50  A("10.211"),
+	//	B("0.01");
+	//std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(100) 
+	//	<< "A\t" << A << "\n"
+	//	<< "B\t" << B << "\n"
+	//	<< "mod\t" << (boost::multiprecision::fmod(A, B)) << "\n";
+
+	sd.set_balance(coin("50000"));
+	std::cout << sd << "\n\n";
+	try
+	{
+		sd.Pay(coin("10.02"));
+		sd.Pay(coin("100.6"));
+		sd.Pay(coin("500.74"));
+		sd.Pay(coin("1000.11"));
+		sd.Pay(coin("2000"));
+		sd.Earn(coin("1900.12"));
+		sd.Earn(coin("100.9"));
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
 	std::cout << sd << "\n";
+
+	std::stack<BillInfo> t = sd.all_expense_records();
+	while (!t.empty()) {
+		BillInfo a = t.top();
+		std::cout << a << "\n\n";
+		t.pop();
+	}
 
 	return 0;
 }
