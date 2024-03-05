@@ -29,14 +29,14 @@ public:
 		std::string college = "Î´·ÖÅä",
 		std::string classroom = "Î´·ÖÅä"
 	)
-		: kName(correctName(name)),
-		kSex(correctSex(sex)),
+		: kName(CorrectName(name)),
+		kSex(CorrectSex(sex)),
 		kBirthday(birthday),
 		kAdmissionDate(admission_date),
 		kExpectedGraduationDate(egdate),
-		kStudentID(correctStudentID(student_id)),
-		_college(correctCollegeName(college)),
-		_classroom(correctClassroomName(classroom))
+		kStudentID(CorrectStudentID(student_id)),
+		_college(CorrectCollegeName(college)),
+		_classroom(CorrectClassroomName(classroom))
 	{}
 
 	~Student();
@@ -59,8 +59,8 @@ public:
 	Student& set_classroom(const std::string classroom);
 
 	// ¼ì²éº¯Êý
-	bool checkCollegeName(const std::string college) const;
-	bool checkClassroomName(const std::string classroom) const;
+	bool CheckCollegeName(const std::string college) const;
+	bool CheckClassroomName(const std::string classroom) const;
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(Student);
@@ -90,11 +90,11 @@ private:
 	StudentCard* _student_card;					// Ð£Ô°¿¨
 
 	// ¾À´íº¯Êý
-	std::string correctName(const std::string name) const;
-	std::string correctSex(const std::string sex) const;
-	std::int64_t correctStudentID(const std::int64_t student_id) const;
-	std::string correctCollegeName(const std::string college) const;
-	std::string correctClassroomName(const std::string classroom) const;
+	std::string CorrectName(const std::string name) const;
+	std::string CorrectSex(const std::string sex) const;
+	std::int64_t CorrectStudentID(const std::int64_t student_id) const;
+	std::string CorrectCollegeName(const std::string college) const;
+	std::string CorrectClassroomName(const std::string classroom) const;
 };
 
 #endif // !STUDENT_H_

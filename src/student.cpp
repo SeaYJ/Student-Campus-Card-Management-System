@@ -110,7 +110,7 @@ std::string Student::classroom() const
 Student& Student::set_college(const std::string college)
 {
 	// 长度检查
-	if (checkCollegeName(college)) {
+	if (CheckCollegeName(college)) {
 		this->_college = college;
 	}
 	else {
@@ -123,7 +123,7 @@ Student& Student::set_college(const std::string college)
 Student& Student::set_classroom(const std::string classroom)
 {
 	// 长度检查
-	if (checkClassroomName(classroom)) {
+	if (CheckClassroomName(classroom)) {
 		this->_classroom = classroom;
 	}
 	else {
@@ -133,7 +133,7 @@ Student& Student::set_classroom(const std::string classroom)
 	return *this;
 }
 
-bool Student::checkCollegeName(const std::string college) const
+bool Student::CheckCollegeName(const std::string college) const
 {
 	if (college.length() > COLLEGE_NAME_MAX_LENGTH) {
 		return false;
@@ -142,7 +142,7 @@ bool Student::checkCollegeName(const std::string college) const
 	return true;
 }
 
-bool Student::checkClassroomName(const std::string classroom) const
+bool Student::CheckClassroomName(const std::string classroom) const
 {
 	if (classroom.length() > CLASSROOM_NAME_MAX_LENGTH) {
 		return false;
@@ -151,12 +151,12 @@ bool Student::checkClassroomName(const std::string classroom) const
 	return true;
 }
 
-std::string Student::correctName(const std::string name) const
+std::string Student::CorrectName(const std::string name) const
 {
 	// 当名字超出最大长度，
 	// 仅显示部分内容，并用省略号显示
 	if (name.length() > NAME_MAX_LENGTH) {
-		std::string name_with_omitted_char = name.substr(0, (NAME_MAX_LENGTH - std::int8_t(3)));
+		std::string name_with_omitted_char = name.substr(0, std::size_t(NAME_MAX_LENGTH - std::int8_t(3)));
 		name_with_omitted_char.append("...");
 		return name_with_omitted_char;
 	}
@@ -165,12 +165,12 @@ std::string Student::correctName(const std::string name) const
 	return name;
 }
 
-std::string Student::correctSex(const std::string sex) const
+std::string Student::CorrectSex(const std::string sex) const
 {
 	// 当性别超出最大长度，
 	// 仅显示部分内容，并用省略号显示
 	if (sex.length() > SEX_MAX_LENGTH) {
-		std::string sex_with_omitted_char = sex.substr(0, (SEX_MAX_LENGTH - std::int8_t(3)));
+		std::string sex_with_omitted_char = sex.substr(0, std::size_t(SEX_MAX_LENGTH - std::int8_t(3)));
 		sex_with_omitted_char.append("...");
 		return sex_with_omitted_char;
 	}
@@ -179,7 +179,7 @@ std::string Student::correctSex(const std::string sex) const
 	return sex;
 }
 
-std::int64_t Student::correctStudentID(const std::int64_t student_id) const
+std::int64_t Student::CorrectStudentID(const std::int64_t student_id) const
 {
 	std::int64_t student_id_length = std::int64_t(std::log10(student_id)) + std::int64_t(1);
 
@@ -198,12 +198,12 @@ std::int64_t Student::correctStudentID(const std::int64_t student_id) const
 	return student_id;
 }
 
-std::string Student::correctCollegeName(const std::string college) const
+std::string Student::CorrectCollegeName(const std::string college) const
 {
 	// 当学院名超出最大长度，
 	// 仅显示部分内容，并用省略号显示
 	if (college.length() > COLLEGE_NAME_MAX_LENGTH) {
-		std::string college_with_omitted_char = college.substr(0, (COLLEGE_NAME_MAX_LENGTH - std::int8_t(3)));
+		std::string college_with_omitted_char = college.substr(0, std::size_t(COLLEGE_NAME_MAX_LENGTH - std::int8_t(3)));
 		college_with_omitted_char.append("...");
 		return college_with_omitted_char;
 	}
@@ -212,12 +212,12 @@ std::string Student::correctCollegeName(const std::string college) const
 	return college;
 }
 
-std::string Student::correctClassroomName(const std::string classroom) const
+std::string Student::CorrectClassroomName(const std::string classroom) const
 {
 	// 当班级名超出最大长度，
 	// 仅显示部分内容，并用省略号显示
 	if (classroom.length() > CLASSROOM_NAME_MAX_LENGTH) {
-		std::string classroom_with_omitted_char = classroom.substr(0, (CLASSROOM_NAME_MAX_LENGTH - std::int8_t(3)));
+		std::string classroom_with_omitted_char = classroom.substr(0, std::size_t(CLASSROOM_NAME_MAX_LENGTH - std::int8_t(3)));
 		classroom_with_omitted_char.append("...");
 		return classroom_with_omitted_char;
 	}
@@ -249,7 +249,7 @@ std::istream& operator>>(std::istream& is, Student& stu)
 
 	std::cout << "学院: ";
 	is >> college_buffer;
-	if (stu.checkCollegeName(college_buffer))
+	if (stu.CheckCollegeName(college_buffer))
 	{
 		throw std::invalid_argument("College name is not valid.");
 	}
@@ -260,7 +260,7 @@ std::istream& operator>>(std::istream& is, Student& stu)
 
 	std::cout << "班级: ";
 	is >> classroom_buffer;
-	if (stu.checkClassroomName(classroom_buffer))
+	if (stu.CheckClassroomName(classroom_buffer))
 	{
 		throw std::invalid_argument("Classroom name is not valid.");
 	}
