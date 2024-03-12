@@ -2,11 +2,11 @@
 #define STUDENT_H_
 
 #include <iostream>
-#include <string>
+#include <string> 
 #include <stdexcept>
 #include <ctime>
 #include "SPECIAL_DEFINITION_MACRO.h"
-#include "time_output_model.h"
+#include "time_io_model.h"
 #include "student_card.h"
 
 class Student

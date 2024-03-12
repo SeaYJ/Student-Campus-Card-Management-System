@@ -7,7 +7,7 @@
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
 #include "SPECIAL_DEFINITION_MACRO.h"
-#include "time_output_model.h"
+#include "time_io_model.h"
 
 #ifndef NAMESPACE_DEF_BOOSTMUL
 #define NAMESPACE_DEF_BOOSTMUL
@@ -30,7 +30,7 @@ typedef struct
 inline std::ostream& operator<<(std::ostream& os, const BillInfo& bill_info) {
 	// 输出 bill 的各个字段到 os 流中
 	os << "订单编号\t" << bill_info.bill_num << "\n"
-		<< "交易时间\t" << TimeOutputModel::FormatTime(_localtime64(&(bill_info.date)), TimeOutputModel::All) << "\n"
+		<< "交易时间\t" << TimeOutputModel::OutputFormatTime(_localtime64(&(bill_info.date)), TimeOutputModel::All) << "\n"
 		<< "交易金额\t" << bill_info.amount;
 
 	return os;

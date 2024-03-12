@@ -22,9 +22,9 @@ std::string Student::birthday() const
 	// 为了提高效率，这里直接采用最原始的方式进行格式化日期字符串
 	// 实际后面的所有代码等同于：
 	/* CPP 等效代码
-	* return TimeOutputModel::FormatTime(time_info, TimeOutputModel::All);
+	* return TimeOutputModel::OutputFormatTime(time_info, TimeOutputModel::All);
 	*/
-	// 在等效代码中因为经过 TimeOutputModel::FormatTime 函数需要很多 if 判断，
+	// 在等效代码中因为经过 TimeOutputModel::OutputFormatTime 函数需要很多 if 判断，
 	// 然后还要将每个字段进行组合（字符串拼接），
 	// 我认为会花费不必要的时间！！！
 	char buffer[128] = { 0 };													// 定义一个足够大的缓冲区
@@ -37,7 +37,7 @@ std::string Student::birthday(const std::int8_t ops) const
 {
 	const struct tm* time_info = _localtime64(&(this->kBirthday));				// 解析得到 tm 结构体数据
 
-	return TimeOutputModel::FormatTime(time_info, ops);							// 返回由 ops 确定的时间字串组合
+	return TimeOutputModel::OutputFormatTime(time_info, ops);							// 返回由 ops 确定的时间字串组合
 }
 
 std::string Student::admission_date() const
@@ -47,9 +47,9 @@ std::string Student::admission_date() const
 	// 为了提高效率，这里直接采用最原始的方式进行格式化日期字符串
 	// 实际后面的所有代码等同于：
 	/* CPP 等效代码
-	* return TimeOutputModel::FormatTime(time_info, TimeOutputModel::All);
+	* return TimeOutputModel::OutputFormatTime(time_info, TimeOutputModel::All);
 	*/
-	// 在等效代码中因为经过 TimeOutputModel::FormatTime 函数需要很多 if 判断，
+	// 在等效代码中因为经过 TimeOutputModel::OutputFormatTime 函数需要很多 if 判断，
 	// 然后还要将每个字段进行组合（字符串拼接），
 	// 我认为会花费不必要的时间！！！
 	char buffer[128] = { 0 };													// 定义一个足够大的缓冲区
@@ -63,7 +63,7 @@ std::string Student::admission_date(const std::int8_t ops) const
 {
 	const struct tm* time_info = _localtime64(&(this->kAdmissionDate));			// 解析得到 tm 结构体数据
 
-	return TimeOutputModel::FormatTime(time_info, ops);							// 返回由 ops 确定的时间字串组合
+	return TimeOutputModel::OutputFormatTime(time_info, ops);							// 返回由 ops 确定的时间字串组合
 }
 
 std::string Student::expected_graduation_date() const
@@ -73,9 +73,9 @@ std::string Student::expected_graduation_date() const
 	// 为了提高效率，这里直接采用最原始的方式进行格式化日期字符串
 	// 实际后面的所有代码等同于：
 	/* CPP 等效代码
-	* return TimeOutputModel::FormatTime(time_info, TimeOutputModel::All);
+	* return TimeOutputModel::OutputFormatTime(time_info, TimeOutputModel::All);
 	*/
-	// 在等效代码中因为经过 TimeOutputModel::FormatTime 函数需要很多 if 判断，
+	// 在等效代码中因为经过 TimeOutputModel::OutputFormatTime 函数需要很多 if 判断，
 	// 然后还要将每个字段进行组合（字符串拼接），
 	// 我认为会花费不必要的时间！！！
 	char buffer[128] = { 0 };													// 定义一个足够大的缓冲区
@@ -89,7 +89,7 @@ std::string Student::expected_graduation_date(const std::int8_t ops) const
 {
 	const struct tm* time_info = _localtime64(&(this->kExpectedGraduationDate));// 解析得到 tm 结构体数据
 
-	return TimeOutputModel::FormatTime(time_info, ops);							// 返回由 ops 确定的时间字串组合
+	return TimeOutputModel::OutputFormatTime(time_info, ops);							// 返回由 ops 确定的时间字串组合
 }
 
 std::int64_t Student::student_id() const
